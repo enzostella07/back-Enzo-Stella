@@ -1,20 +1,20 @@
-import fs from "fs"
+import fs from "fs";
 
 class ProductManager {
-  constructor() {
-    this.path = "./src/products.json";
+  constructor(path) {
+    this.path = path;
   }
 
   async addProduct(product) {
     try {
       //Para no copiar el mismo codigo, me traigo la linea haciendo esto:
       let products = await this.getProducts();
-      
+
       // ¿existe el producto?
       if (products.some((prod) => prod.code === product.code)) {
         return "Product exists";
       }
-      
+
       // propiedades del producto
       if (
         !product.title ||
@@ -22,20 +22,21 @@ class ProductManager {
         !product.price ||
         !product.thumbnail ||
         !product.code ||
-        !product.stock
-        ) {
-          return console.log("error");
-        }
-        
+        !product.stock ||
+        !product.category
+      ) {
+        return console.log("error");
+      }
+
       // Else, push product
-      let id = products.length ? products[products.length - 1].id + 1 : 1
-      product = { id: 4, ...product };
-      products.push(product);
+      const id = (Math.random() * 1000000000).toFixed(0).toString(),
+        newProduct = { id: id, ...product };
+      products.push(newProduct);
 
       await fs.promises.writeFile(this.path, JSON.stringify(products, null, 2));
-      return product;
+      return "product added succesfully";
     } catch (e) {
-      throw new Error (e)
+      throw new Error(e);
     }
   }
 
@@ -57,14 +58,14 @@ class ProductManager {
       let products = await this.getProducts();
       const productFound = products.find((product) => product.id == id);
       if (!productFound) {
-        throw new Error("product not found")
+        throw new Error("product not found");
       }
       return productFound;
     } catch (error) {
-      throw new Error (error)
+      throw new Error(error);
     }
   }
-    // me fijo si existe el producto
+
 
   async deleteProduct(id) {
     let products = await this.getProducts();
@@ -72,11 +73,8 @@ class ProductManager {
     if (productIndex == -1) {
       return "product whit id not found";
     }
-    products.splice(productIndex, 1)
-    await fs.promises.writeFile(
-      this.path,
-      JSON.stringify(products, null, 2)
-    );
+    products.splice(productIndex, 1);
+    await fs.promises.writeFile(this.path, JSON.stringify(products, null, 2));
   }
 
   async updateProduct(id, newProductData) {
@@ -93,7 +91,7 @@ class ProductManager {
       ...products[productIndex],
       ...newProductData,
     };
-     
+
     //guardo los cambios en el archivo
     await fs.promises.writeFile(this.path, JSON.stringify(products, null, 2));
     return products[productIndex];

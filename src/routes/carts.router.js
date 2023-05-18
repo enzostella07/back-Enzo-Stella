@@ -2,8 +2,8 @@ import express from "express";
 import ProductManager from "../ProductManager.js";
 import CartManager from "../CartManager.js";
 
-const products = new ProductManager("../products.json");
-const carts = new CartManager("../carts.json");
+const products = new ProductManager("./products.json");
+const carts = new CartManager("./carts.json");
 
 export const cartsRouter = express.Router();
 
@@ -19,6 +19,21 @@ cartsRouter.get("/", async (req, res) => {
         .status(500)
         .json({ status: "error", msg: "Error in server", data: {} });
     }
+  }
+});
+
+cartsRouter.post("/", async (req, res) => {
+  try {
+      const product = await carts.addCart();
+      return res.status(201).json({ message: "complete cart creation" });
+  } catch (error) {
+      if (error.message === "error, reading or writting file") {
+          res.status(409).json({ message: "cant create cart" })
+      }
+      else {
+          console.log(error);
+          res.status(500).json({ message: 'error desconocido' })
+      }
   }
 });
 

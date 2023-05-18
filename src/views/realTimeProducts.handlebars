@@ -1,0 +1,121 @@
+<div id="productList">
+  <div>
+    <div id="dinamic-list">
+      {{#each products}}
+      <div>
+        <p>{{this.id}}</p>
+        <p>{{this.title}}</p>
+        <p>{{this.description}}</p>
+        <p>{{this.price}}</p>
+        <p>{{this.code}}</p>
+        <p>{{this.stock}}</p>
+        <p>{{this.category}}</p>
+        <button style="background-color: red;" type="button" onclick="deleteProduct('{{this.id}}')">X</button>
+        <hr />
+      </div>
+      {{/each}}
+    </div>
+
+    <div class="">
+      <h2 class="text-center my-4">Añadir Nuevo Producto</h2>
+      <form id="form-products" style="margin: auto">
+        <div style="margin-bottom: 16px">
+          <div class="">
+            <label for="title"> Titulo: </label>
+            <br />
+            <input
+              type="text"
+              name="title"
+              id="form-title"
+              style="margin-bottom: 16px"
+              placeholder="Agregar un titulo al producto"
+            />
+          </div>
+
+          <div class="col-md-auto mx-3">
+            <label for="description"> Descripción: </label>
+            <br />
+            <input
+              type="text"
+              name="description"
+              id="form-description"
+              style="margin-bottom: 16px"
+              class=""
+              placeholder="Agregar un descripción al producto"
+            />
+          </div>
+
+          <div class="col-md-auto mx-3">
+            <label for="price"> Precio: </label>
+            <br />
+            <input
+              type="number"
+              name="price"
+              id="form-price"
+              style="margin-bottom: 16px"
+              step="1"
+              class=""
+              placeholder="Agregar un precio al producto"
+            />
+          </div>
+
+          <div class="">
+            <label for="code"> Código: </label>
+            <br />
+            <input
+              type="text"
+              name="code"
+              id="form-code"
+              style="margin-bottom: 16px"
+              placeholder="Agregar un código al producto"
+            />
+          </div>
+
+          <div class="">
+            <label for="stock"> Stock: </label>
+            <br />
+            <input
+              type="number"
+              name="stock"
+              id="form-stock"
+              style="margin-bottom: 16px"
+              step="1"
+              placeholder="Agregar stock al producto"
+            />
+          </div>
+
+          <div class="">
+            <label for="category"> Categoria: </label>
+            <br />
+            <input
+              type="text"
+              name="category"
+              id="form-category"
+              style="margin-bottom: 16px"
+              placeholder="Agregar una categoria al producto"
+            />
+          </div>
+
+          <div class="">
+            <label for="thumbnail"> URL de la Imagen: </label>
+            <br />
+            <input
+              type="text"
+              name="thumbnail"
+              id="form-thumbnail"
+              style="margin-bottom: 16px"
+              placeholder="Agregar una URL valida"
+            />
+          </div>
+          <div
+            style="display: flex; justify-content: start; align-items: center"
+          >
+            <input type="submit" value="Crear producto" />
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="js/index.js"></script>
