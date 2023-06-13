@@ -1,81 +1,66 @@
 import express from "express";
-import ProductManager from "../ProductManager.js";
+import productManager from "../services/ProductManager.js";
 
-const productManager = new ProductManager("./products.json");
+// const productManager = new ProductManager("./products.json");
 export const productsRouter = express.Router();
 
 productsRouter.get("/", async (req, res) => {
-  try {
-    const limit = req.query.limit;
-    const products = await productManager.getProducts();
-    if (limit) {
-      res.status(200).json(products.slice(0, limit));
-    } else {
-      res.status(200).json(products);
-    }
-  } catch (error) {
-    res.status(500).json({ message: "There was an error" });
+  let { limit = 3, page = 1, query, sort } = req.query;
+  if (sort && sort !== "asc" && sort !== "desc") {
+    sort = "";
   }
+  const payload = await productManager.getProducts({
+    limit,
+    page,
+    query,
+    sort,
+  });
+  res.status(200).json({
+    success: true,
+    ...payload,
+  });
 });
 
-productsRouter.get("/:pid", async (req, res) => {
-  try {
-    const id = req.params.pid;
-    const product = await productManager.getProductById(parseInt(id));
-    if (!product) {
-      res.status(404).status(500).json({ error: "product not found" });
-    }
-    res.status(200).json(product);
-  } catch (error) {
-    res.status(500).json({ error: "There was an error" });
-  }
+productsRouter.get("/:id", async (req, res) => {
+  const { id } = req.params;
+  const product = await productManager.getProductById(id);
+  res.status(200).json({
+    success: true,
+    payload: product,
+  });
 });
 
 productsRouter.post("/", async (req, res) => {
-  try {
-    const { title, description, code, price, stock, category, thumbnail } =
-      req.body;
-    const newProduct = {
-      title,
-      description,
-      code,
-      price,
-      status: true,
-      stock,
-      category,
-      thumbnail: thumbnail || [],
-    };
-    await productManager.addProduct(newProduct);
-    return res.status(201).json(newProduct);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Internal Server Error" });
-  }
+  const newProduct = await productService.addProduct(req.body)
+  // Envio evento realtime a todos los sockets conectados. Si el producto fue agregado por alguien conectado en realtime se le enviara al resto
+  // de lo contrario se le enviara a todo el mundo.
+  req.clientSocket?.broadcast.emit('product:created', newProduct) ??
+    req.ioServer.emit('product:created', newProduct)
+  res.status(201).json({
+    success: true,
+    payload: newProduct
+  })
+})
+
+productsRouter.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const productUpdated = await productManager.updateProduct(id, req.body);
+  res.status(200).json({
+    success: true,
+    payload: productUpdated,
+  });
 });
 
-productsRouter.put("/:pid", async (req, res) => {
-  try {
-    const id = req.params.pid;
-    let changeProduct = req.body;
-    await productManager.updateProduct(id, changeProduct);
-    return res.status(201).json({
-      status: "Success",
-      msg: "product updated",
-      data: changeProduct,
-    });
-  } catch {
-    res.status(500).json({ status: "error", msg: "Invalid input", data: {} });
-  }
-});
-
-productsRouter.delete("/:pid", async (req, res) => {
-  const id = parseInt(req.params.pid);
-  try {
-    await productManager.deleteProduct(id);
-    res.status(200).json({ message: "Producto borrado con el id" + id });
-  } catch (err) {
-    res.status(404).json({ error: err.message });
-  }
+productsRouter.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+  await productManager.deleteProduct(id);
+  // Envio evento realtime a todos los sockets conectados. Si el producto fue eliminado por alguien conectado en realtime se le enviara al resto
+  // de lo contrario se le enviara a todo el mundo.
+  req.clientSocket?.broadcast.emit("product:deleted", id) ??
+    req.ioServer.emit("product:deleted", id);
+  res.status(200).json({
+    success: true,
+  });
 });
 
 export default productsRouter;

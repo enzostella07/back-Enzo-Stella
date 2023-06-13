@@ -19,7 +19,9 @@ socket.on("products", (products) => {
   console.log(products);
   document.getElementById("dinamic-list").innerHTML = products.reduce(
     (acc, item) => {
-      return acc + `
+      return (
+        acc +
+        `
       <div>
         <p>${item.id}</p>
         <p>${item.title}</p>
@@ -31,8 +33,10 @@ socket.on("products", (products) => {
         <button style="background-color: red;" type="button" onclick="deleteProduct('${item.id}')">X</button>
         <hr />
       </div>
-      `;
-    }, ""
+      `
+      );
+    },
+    ""
   );
 });
 
