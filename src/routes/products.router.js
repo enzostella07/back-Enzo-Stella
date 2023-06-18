@@ -1,66 +1,135 @@
 import express from "express";
-import productManager from "../services/ProductManager.js";
+import ProductManager from "../services/ProductManager.js";
+const productManager = new ProductManager();
 
-// const productManager = new ProductManager("./products.json");
 export const productsRouter = express.Router();
 
 productsRouter.get("/", async (req, res) => {
-  let { limit = 3, page = 1, query, sort } = req.query;
-  if (sort && sort !== "asc" && sort !== "desc") {
-    sort = "";
+  try {
+    const queryParams = req.query;
+    const response = await productManager.get(queryParams);
+    return res.status(200).json(response);
+  } catch (e) {
+    console.log(e);
+    return res.status(500).json({
+      status: "error",
+      msg: "something went wrong :(",
+      data: {},
+    });
   }
-  const payload = await productManager.getProducts({
-    limit,
-    page,
-    query,
-    sort,
-  });
-  res.status(200).json({
-    success: true,
-    ...payload,
-  });
 });
 
-productsRouter.get("/:id", async (req, res) => {
-  const { id } = req.params;
-  const product = await productManager.getProductById(id);
-  res.status(200).json({
-    success: true,
-    payload: product,
-  });
+productsRouter.get("/:pid", async (req, res) => {
+  try {
+    const { pid } = req.params;
+    const product = await productManager.get(pid);
+    return res.status(200).json({
+      status: "success",
+      msg: "producto",
+      data: product,
+    });
+  } catch (e) {
+    console.log(e);
+    return res.status(500).json({
+      status: "error",
+      msg: "something went wrong :(",
+      data: {},
+    });
+  }
 });
 
 productsRouter.post("/", async (req, res) => {
-  const newProduct = await productService.addProduct(req.body)
-  // Envio evento realtime a todos los sockets conectados. Si el producto fue agregado por alguien conectado en realtime se le enviara al resto
-  // de lo contrario se le enviara a todo el mundo.
-  req.clientSocket?.broadcast.emit('product:created', newProduct) ??
-    req.ioServer.emit('product:created', newProduct)
-  res.status(201).json({
-    success: true,
-    payload: newProduct
-  })
-})
+  try {
+    const { title, description, price, thumbnail, code, stock, category } =
+      req.body;
+    const productCreated = await productManager.createOne(
+      title,
+      description,
+      price,
+      thumbnail,
+      code,
+      stock,
+      category
+    );
+    return res.status(201).json({
+      status: "success",
+      msg: "product created",
+      data: productCreated,
+    });
+  } catch (e) {
+    console.log(e);
+    return res.status(500).json({
+      status: "error",
+      msg: "error en validaciones",
+      data: {},
+    });
+  }
+});
 
 productsRouter.put("/:id", async (req, res) => {
-  const { id } = req.params;
-  const productUpdated = await productManager.updateProduct(id, req.body);
-  res.status(200).json({
-    success: true,
-    payload: productUpdated,
-  });
+  try {
+    const { id } = req.params;
+    const { title, description, price, thumbnail, code, stock, category } =
+      req.body;
+    if (
+      !title ||
+      !description ||
+      !price ||
+      !thumbnail ||
+      !code ||
+      !stock ||
+      !category
+    ) {
+      console.log("validation error: please complete all fields.");
+      return res.status(400).json({
+        status: "error",
+        msg: "validation error: please complete all fields.",
+        data: {},
+      });
+    }
+
+    const productUpdated = await productManager.updateOne(
+      id,
+      title,
+      description,
+      price,
+      thumbnail,
+      code,
+      stock,
+      category
+    );
+    return res.status(200).json({
+      status: "success",
+      msg: "product updated",
+      data: productUpdated,
+    });
+  } catch (e) {
+    console.log(e);
+    return res.status(500).json({
+      status: "error",
+      msg: "something went wrong :)",
+      data: {},
+    });
+  }
 });
 
 productsRouter.delete("/:id", async (req, res) => {
-  const { id } = req.params;
-  await productManager.deleteProduct(id);
-  // Envio evento realtime a todos los sockets conectados. Si el producto fue eliminado por alguien conectado en realtime se le enviara al resto
-  // de lo contrario se le enviara a todo el mundo.
-  req.clientSocket?.broadcast.emit("product:deleted", id) ??
-    req.ioServer.emit("product:deleted", id);
-  res.status(200).json({
-    success: true,
-  });
+  try {
+    const { id } = req.params;
+    const productDeleted = await productManager.deleteOne(id);
+    return res.status(200).json({
+      status: "success",
+      msg: "product deleted",
+      data: {},
+    });
+  } catch (e) {
+    console.log(e);
+    return res.status(500).json({
+      status: "error",
+      msg: "something went wrong :(",
+      data: {},
+    });
+  }
 });
 
 export default productsRouter;
