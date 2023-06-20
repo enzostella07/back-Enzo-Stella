@@ -9,9 +9,9 @@
     <p>{{this.stock}}</p>
     <p>{{this.category}}</p>
     <p>Availability: {{this.availability}}</p>
-    <button onclick="putIntoCart('{{this._id}}')" style="background-color: lightblue;">AGREGAR AL CARRO {{this._id}} </button>
+    <a href="/products/{{this_id}}">View Details</a>
+    <button onclick="putIntoCart('{{this._id}}')" style="background-color: lightblue;">añadir al carrito: {{this._id}} </button>
 
-    <a href="/products/{{_id}}">View Details</a>
     <form action="/api/carts" method="POST">
       <input type="hidden" name="productId" value="{{_id}}" />
       <button type="submit">Add to Cart</button>

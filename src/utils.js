@@ -24,7 +24,6 @@ export async function connectMongo() {
       "mongodb+srv://enzostella07:5CWZTaHh5MDAbiIz@codercluster.ykyflk8.mongodb.net/ecommerce?retryWrites=true&w=majority"
       );
       console.log("plug to mongo!");
-      let student = await CartModel.find({}).populate("products.product")
     } catch (e) {
       console.log(e);
       throw "can not connect to the db";

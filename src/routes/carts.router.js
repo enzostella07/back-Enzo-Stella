@@ -3,6 +3,16 @@ export const cartsRouter = express.Router();
 import CartManager from "../services/CartManager.js";
 const cartManager = new CartManager();
 
+cartsRouter.post("/", async (req, res) => {
+  try {
+    const newCart = await cartManager.createOne();
+    res.status(201).json(newCart);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 cartsRouter.get("/:cid", async (req, res) => {
   try {
     const cartId = req.params.cid;
@@ -13,15 +23,6 @@ cartsRouter.get("/:cid", async (req, res) => {
   }
 });
 
-cartsRouter.post("/", async (req, res) => {
-  try {
-    const newCart = await cartManager.createOne();
-    res.status(201).json(newCart);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
 
 cartsRouter.post("/:cid/product/:pid", async (req, res) => {
   try {
@@ -44,6 +45,18 @@ cartsRouter.put("/:cid", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ status: "error", message: "Internal server error" });
+  }
+});
+
+cartsRouter.put('/:cid/products/:pid', async (req, res) => {
+  try {
+      const {cid, pid} = req.params;
+      const {quantity} = req.body
+      const cart = await cartService.updateProductQuantity(cid, pid, quantity);
+      res.status(200).json({status: 'success', message: 'Product quantity updated', cart});
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({status: 'error', message: 'Internal server error'});
   }
 });
 

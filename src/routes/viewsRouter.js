@@ -3,6 +3,7 @@ export const viewsRouter = express.Router();
 import ProductManager from "../services/ProductManager.js";
 const productManager = new ProductManager();
 import CartManager from "../services/CartManager.js";
+import { ProductModel } from "../DAO/models/products.model.js";
 const cartManager = new CartManager();
 
 viewsRouter.get("/", async (req, res) => {
@@ -10,7 +11,6 @@ viewsRouter.get("/", async (req, res) => {
     const { limit = 10, page = 1, sort, query } = req.query;
     const queryParams = { limit, page, sort, query };
     const products = await productManager.get(queryParams);
-    console.log(products);
     return res.status(200).render("home", { products });
   } catch (err) {
     console.error(err);
@@ -80,11 +80,40 @@ viewsRouter.get("/products", async (req, res) => {
   }
 });
 
+viewsRouter.get("/products/:pid", async (req, res, next) => {
+  try {
+    const { pid } = req.params;
+    const product = await ProductModel.findById(pid);
+
+    const productSimplificado = {
+      _id: product._id.toString(),
+      title: product.title,
+      description: product.description,
+      price: product.price,
+      thumbnail: product.thumbnail,
+      code: product.code,
+      stock: product.stock,
+      category: product.category,
+    };
+
+    res.render("product", { product: productSimplificado });
+  } catch (error) {
+    next(error);
+  }
+});
+
 viewsRouter.get("/carts/:cid", async (req, res, next) => {
   try {
     const { cid } = req.params;
     const cart = await cartManager.get(cid);
-    res.render("cart", { cart });
+    const simplifiedCart = cart.products.map(item =>{
+      return{
+        title: item.product.title,
+        price: item.product.price,
+        quantity: item.quantity,
+      }
+    })
+    res.render("cart", { cart: simplifiedCart });
   } catch (error) {
     next(error);
   }
