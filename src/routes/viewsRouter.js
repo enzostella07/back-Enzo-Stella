@@ -61,6 +61,8 @@ viewsRouter.get("/products", async (req, res) => {
       };
     });
 
+    const role = req.session.isadmin === "admin" ? true : false;
+
     return res.render("products", {
       products: productsSimplified,
       totalPages,
@@ -70,7 +72,9 @@ viewsRouter.get("/products", async (req, res) => {
       hasPrevPage,
       hasNextPage,
       prevLink: prevLink?.substring(4) || "",
-      nextLink: nextLink?.substring(4) || ""
+      nextLink: nextLink?.substring(4) || "",
+      firstname: req.session.first_name,
+      isadmin: role,
     });
   } catch (error) {
     console.log(error);
@@ -106,13 +110,13 @@ viewsRouter.get("/carts/:cid", async (req, res, next) => {
   try {
     const { cid } = req.params;
     const cart = await cartManager.get(cid);
-    const simplifiedCart = cart.products.map(item =>{
-      return{
+    const simplifiedCart = cart.products.map((item) => {
+      return {
         title: item.product.title,
         price: item.product.price,
         quantity: item.quantity,
-      }
-    })
+      };
+    });
     res.render("cart", { cart: simplifiedCart });
   } catch (error) {
     next(error);

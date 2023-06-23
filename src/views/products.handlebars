@@ -1,4 +1,9 @@
-<h1>All Products</h1>
+{{#if isadmin}}
+<h1>Usted es admin 😎</h1>
+{{/if}}
+<h2>Welcome: {{firstname}} </h2>
+<h2>All Products</h2>
+
 {{#each products}}
   <div>
     <h2>{{this.title}}</h2>
@@ -10,7 +15,10 @@
     <p>{{this.category}}</p>
     <p>Availability: {{this.availability}}</p>
     <a href="/products/{{this_id}}">View Details</a>
-    <button onclick="putIntoCart('{{this._id}}')" style="background-color: lightblue;">añadir al carrito: {{this._id}} </button>
+    <button
+      onclick="putIntoCart('{{this._id}}')"
+      style="background-color: lightblue;"
+    >añadir al carrito: {{this._id}} </button>
 
     <form action="/api/carts" method="POST">
       <input type="hidden" name="productId" value="{{_id}}" />
@@ -18,6 +26,8 @@
     </form>
   </div>
 {{/each}}
+
+
 
 totalPages:
 {{totalPages}}

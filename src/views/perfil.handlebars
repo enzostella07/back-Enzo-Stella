@@ -1,9 +1,10 @@
 <h1>Perfil</h1>
-email: {{user.email}}
+email: {{firstname}}
 <br>
-isAdmin: {{user.isAdmin}}
+{{#if isadmin}}
+  Usted es admin😎
+{{/if}}
 <br>
-products: {{products.title}}
-<br>
-
-<a href="/auth/logout">salir</a>
+<button>
+<a href="/auth/logout">Cerrar sesion</a>
+</button>

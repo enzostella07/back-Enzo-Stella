@@ -3,15 +3,19 @@ import { Schema, model } from 'mongoose';
 import monsoosePaginate from 'mongoose-paginate-v2';
 
 const schema = new Schema({
-  firstName: {
+  first_name: {
     type: String,
     required: true,
     max: 100,
   },
-  lastName: {
+  last_name: {
     type: String,
     required: true,
     max: 100,
+  },
+  age: {
+    type: Number,
+    required: true,
   },
   email: {
     type: String,
@@ -24,9 +28,10 @@ const schema = new Schema({
     required: true,
     max: 100,
   },
-  isAdmin: {
-    type: Boolean,
+  role: {
+    type: String,
     required: true,
+    default: "user"
   },
 });
 schema.plugin(monsoosePaginate);
