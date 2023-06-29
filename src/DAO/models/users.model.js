@@ -23,7 +23,7 @@ const schema = new Schema({
     max: 100,
     unique: true,
   },
-  pass: {
+  password: {
     type: String,
     required: true,
     max: 100,

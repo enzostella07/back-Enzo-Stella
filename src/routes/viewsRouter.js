@@ -1,10 +1,18 @@
 import express from "express";
-export const viewsRouter = express.Router();
-import ProductManager from "../services/ProductManager.js";
-const productManager = new ProductManager();
-import CartManager from "../services/CartManager.js";
 import { ProductModel } from "../DAO/models/products.model.js";
+import CartManager from "../services/CartManager.js";
+import ProductManager from "../services/ProductManager.js";
+export const viewsRouter = express.Router();
+const productManager = new ProductManager();
 const cartManager = new CartManager();
+
+viewsRouter.get("/", async (req, res) => {
+  res.render("home");
+});
+
+viewsRouter.get("/login", async (req, res) => {
+  res.render("login-github");
+});
 
 viewsRouter.get("/", async (req, res) => {
   try {

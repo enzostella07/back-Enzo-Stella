@@ -1,7 +1,6 @@
 import express from "express";
 import { UserModel } from "../DAO/models/users.model.js";
-import { isUser, isAdmin } from "../middlewares/auth.js";
-import { ProductModel } from "../DAO/models/products.model.js";
+import { isUser } from "../middlewares/auth.js";
 
 export const authRouter = express.Router();
 
@@ -10,19 +9,18 @@ authRouter.get("/login", (req, res) => {
 });
 
 authRouter.post("/login", async (req, res) => {
-  const { email, pass } = req.body;
-  if (!email || !pass) {
-    return res.status(400).render("error", { error: "ponga su email y pass" });
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).render("error", { error: "ponga su email y password" });
   }
   const usuarioEncontrado = await UserModel.findOne({ email: email });
-  if (usuarioEncontrado && usuarioEncontrado.pass == pass) {
+  if (usuarioEncontrado && usuarioEncontrado.password == password) {
     req.session.email = usuarioEncontrado.email;
     req.session.isadmin = usuarioEncontrado.role;
     req.session.first_name = usuarioEncontrado.first_name;
-    // return res.redirect("/auth/perfil");
     return res.redirect("/products");
   } else {
-    return res.status(401).render("error", { error: "email o pass mal" });
+    return res.status(401).render("error", { error: "email o password mal" });
   }
 });
 
@@ -32,9 +30,9 @@ authRouter.get("/register", (req, res) => {
 
 authRouter.post("/register", async (req, res) => {
   try {
-    const { email, pass, first_name, last_name, age } = req.body;
-    console.log(email, pass, first_name, last_name, age);
-    if (!email || !pass || !first_name || !last_name || !age) {
+    const { email, password, first_name, last_name, age } = req.body;
+    console.log(email, password, first_name, last_name, age);
+    if (!email || !password || !first_name || !last_name || !age) {
       return res
         .status(400)
         .render("error", { error: "Completar todos los campos correctamente" });
@@ -47,14 +45,14 @@ authRouter.post("/register", async (req, res) => {
     }
     await UserModel.create({
       email,
-      pass,
+      password,
       first_name,
       last_name,
       age,
       role: "user",
     });
     req.session.email = email;
-    req.session.pass = pass;
+    req.session.password = password;
     req.session.first_name = first_name;
     req.session.last_name = last_name;
     req.session.age = age;
