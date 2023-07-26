@@ -11,7 +11,7 @@ sessionsRouter.get('/githubcallback', passport.authenticate('github', { failureR
   req.session.first_name = req.user.first_name;
   req.session.last_name = req.user.last_name;
   req.session.age = req.user.age;
-  req.session.role = req.user.role;
+  req.session.rol = req.user.rol;
   
   res.redirect('/products');
 }); 
@@ -23,7 +23,7 @@ sessionsRouter.get('/show', (req, res) => {
 sessionsRouter.get("/logout", (req, res) => {
   req.session.destroy((err) => {
     if (err) {
-      res.status(500).render("error", { error: "no se pudo cerra la sesion" });
+      res.status(500).render("error", { error: "no se pudo cerrar la sesion" });
     }
     return res.redirect("/api/sessions/login");
   });

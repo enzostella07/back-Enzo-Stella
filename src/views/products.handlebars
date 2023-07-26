@@ -1,11 +1,37 @@
 {{#if isadmin}}
-<h1>Usted es admin 😎</h1>
+  <h1>Usted es admin 😎</h1>
 {{/if}}
 <h2>Welcome: {{firstname}} </h2>
+<a href="/auth/logout" class="btn btn-Danger ">Cerrar sesión</a>
 <h2>All Products</h2>
 
 {{#each products}}
-  <div>
+  <div class="row">
+    <div class="col-md-3">
+      <div class="card">
+        <img
+          src="ruta_imagen"
+          class="card-img-top"
+          alt="Thumbnail del producto"
+        />
+        <div class="card-body">
+          <h5 class="card-title">{{this.title}}</h5>
+          <p class="card-text">{{this.description}}</p>
+          <p class="card-text">{{this.price}}</p>
+          <p class="card-text">{{this.code}}</p>
+          <p class="card-text">{{this.stock}}</p>
+          <p class="card-text">{{this.category}}</p>
+          <a href="/products/{{this._id}}" class="btn btn-primary">Ver detalles</a>
+          <button
+            onclick="putIntoCart('{{this._id}}')"
+            class="btn btn-success"
+          >Añadir al carrito</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{!-- <div>
     <h2>{{this.title}}</h2>
     <p>{{this.description}}</p>
     <p>Price: {{this.price}}</p>
@@ -13,21 +39,13 @@
     <p>{{this.code}}</p>
     <p>{{this.stock}}</p>
     <p>{{this.category}}</p>
-    <p>Availability: {{this.availability}}</p>
     <a href="/products/{{this_id}}">View Details</a>
     <button
       onclick="putIntoCart('{{this._id}}')"
       style="background-color: lightblue;"
     >añadir al carrito: {{this._id}} </button>
-
-    <form action="/api/carts" method="POST">
-      <input type="hidden" name="productId" value="{{_id}}" />
-      <button type="submit">Add to Cart</button>
-    </form>
-  </div>
+  </div> --}}
 {{/each}}
-
-
 
 totalPages:
 {{totalPages}}

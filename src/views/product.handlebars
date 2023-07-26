@@ -1,14 +1,11 @@
-<div>
-  <h1>
-    Title:
-    {{product.title}}
-  </h1>
-  <h2>
-    price:
-    {{product.price}}
-  </h2>
-  <h3>
-    Category:
-    {{product.category}}
-  </h3>
-</div>
+  <div class="card">
+    <img src="ruta_imagen" class="card-img-top" alt="Thumbnail del producto" />
+    <div class="card-body">
+      <h3 class="card-title">{{product.title}}</h3>
+      <p class="card-text">{{product.description}}</p>
+      <p class="card-text">{{product.price}}</p>
+      <p class="card-text">{{product.code}}</p>
+      <p class="card-text">{{product.stock}}</p>
+      <p class="card-text">{{product.category}}</p>
+    </div>
+  </div>

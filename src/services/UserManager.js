@@ -12,9 +12,9 @@ export class UserService {
     return users;
   }
 
-  async createOne(first_name, last_name, email) {
+  async createOne(first_name, last_name, email ) {
     this.validateUser(first_name, last_name, email);
-    const userCreated = await UserModel.create({ first_name, last_name, email });
+    const userCreated = await UserModel.create({ first_name, last_name, email  });
     return userCreated;
   }
 

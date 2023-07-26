@@ -1,8 +1,12 @@
 import MongoStore from "connect-mongo";
+import dotenv from "dotenv";
 import express from "express";
 import handlebars from "express-handlebars";
 import session from "express-session";
+import passport from "passport";
 import path from "path";
+import env from "./config/config.js";
+import { iniPassport } from "./config/passport.config.js";
 import { authRouter } from "./routes/auth.router.js";
 import { cartsRouter } from "./routes/carts.router.js";
 import { productsRouter } from "./routes/products.router.js";
@@ -11,18 +15,15 @@ import { testSocketChatRouter } from "./routes/test.socket.chat.router.js";
 import { usersRouter } from "./routes/users.router.js";
 import { viewsRouter } from "./routes/viewsRouter.js";
 import connectSocket, { __dirname, connectMongo } from "./utils.js";
-import { iniPassport } from "./config/passport.config.js";
-import passport from "passport";
+
+dotenv.config();
+console.log("hola", env);
 
 const app = express();
-const port = 8080;
-const httpServer = app.listen(port, () => {
-  console.log(`Example app listening on port http://localhost:${port}`);
+const PORT = env.PORT || 8080;
+const httpServer = app.listen(PORT, () => {
+  console.log(`Example app listening on PORT http://localhost:${PORT}`);
 });
-
-
-
-
 
 connectMongo();
 connectSocket(httpServer);

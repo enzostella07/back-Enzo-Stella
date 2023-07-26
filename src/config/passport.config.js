@@ -38,7 +38,7 @@ export function iniPassport() {
               email: profile.email,
               first_name: profile._json.name || profile._json.login || "noname",
               last_name: "nolast",
-              role: "user",
+              rol: "user",
               age: 18,
               password: "nopass",
             };
@@ -102,7 +102,7 @@ export function iniPassport() {
             email,
             first_name,
             last_name,
-            isadmin: role,
+            isadmin: rol,
             password: createHash(password),
           };
           let userCreated = await UserModel.create(newUser);

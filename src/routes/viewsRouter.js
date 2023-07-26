@@ -3,6 +3,7 @@ import { ProductModel } from "../DAO/models/products.model.js";
 import CartManager from "../services/CartManager.js";
 import ProductManager from "../services/ProductManager.js";
 export const viewsRouter = express.Router();
+
 const productManager = new ProductManager();
 const cartManager = new CartManager();
 
@@ -69,7 +70,7 @@ viewsRouter.get("/products", async (req, res) => {
       };
     });
 
-    const role = req.session.isadmin === "admin" ? true : false;
+    const rol = req.session.isadmin === "admin" ? true : false;
 
     return res.render("products", {
       products: productsSimplified,
@@ -82,7 +83,8 @@ viewsRouter.get("/products", async (req, res) => {
       prevLink: prevLink?.substring(4) || "",
       nextLink: nextLink?.substring(4) || "",
       firstname: req.session.first_name,
-      isadmin: role,
+      lastname: req.session.last_name,
+      isadmin: rol,
     });
   } catch (error) {
     console.log(error);

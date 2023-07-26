@@ -16,7 +16,7 @@ authRouter.post("/login", async (req, res) => {
   const usuarioEncontrado = await UserModel.findOne({ email: email });
   if (usuarioEncontrado && usuarioEncontrado.password == password) {
     req.session.email = usuarioEncontrado.email;
-    req.session.isadmin = usuarioEncontrado.role;
+    req.session.isadmin = usuarioEncontrado.rol;
     req.session.first_name = usuarioEncontrado.first_name;
     return res.redirect("/products");
   } else {
@@ -31,7 +31,6 @@ authRouter.get("/register", (req, res) => {
 authRouter.post("/register", async (req, res) => {
   try {
     const { email, password, first_name, last_name, age } = req.body;
-    console.log(email, password, first_name, last_name, age);
     if (!email || !password || !first_name || !last_name || !age) {
       return res
         .status(400)
@@ -49,14 +48,14 @@ authRouter.post("/register", async (req, res) => {
       first_name,
       last_name,
       age,
-      role: "user",
+      rol: "user",
     });
     req.session.email = email;
     req.session.password = password;
     req.session.first_name = first_name;
     req.session.last_name = last_name;
     req.session.age = age;
-    req.session.role = "user";
+    req.session.rol = "user";
 
     console.log("email", email);
     console.log("req.session", req.session);
@@ -71,16 +70,16 @@ authRouter.post("/register", async (req, res) => {
 });
 
 authRouter.get("/perfil", isUser, (req, res) => {
-  const role =
-    req.session.role === "admin" ? "Administrador" : "Usuario Estándar";
-  return res.render("perfil", {
-    firstname: req.session.first_name,
-    lastname: req.session.last_name,
-    email: req.session.email,
-    age: req.session.age,
-    isadmin: role,
+  const rol =
+    req.session.rol === "admin" ? "Administrador" : "Usuario Estándar";
+    return res.render("perfil", {
+      firstname: req.session.first_name,
+      lastname: req.session.last_name,
+      email: req.session.email,
+      age: req.session.age,
+      isadmin: rol,
+    });
   });
-});
 
 authRouter.get("/logout", (req, res) => {
   req.session.destroy((err) => {
